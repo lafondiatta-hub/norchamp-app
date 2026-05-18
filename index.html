@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1E1C1B">
+<title>Norchamp · Registro</title>
+<style>
+  :root {
+    --carbon: #1E1C1B; --chalk: #F2F0EE; --beige: #E1D9C8;
+    --marron: #9B826A; --gris: #ACA496; --dark: #141210;
+    --green: #4CAF50; --red: #E53935; --yellow: #FFC107;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--carbon); color: var(--chalk); min-height: 100vh; max-width: 480px; margin: 0 auto; }
+  .header { background: var(--dark); padding: 16px 20px 12px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--marron); }
+  .header-brand { font-size: 13px; font-weight: 700; letter-spacing: 2px; color: var(--chalk); }
+  .header-sub { font-size: 10px; color: var(--gris); letter-spacing: 1px; margin-top: 1px; }
+  .header-logo { width: 32px; height: 32px; opacity: 0.85; }
+  .screen { display: none; padding: 20px; min-height: calc(100vh - 60px); }
+  .screen.active { display: block; }
+  .section-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--marron); margin-bottom: 6px; text-transform: uppercase; }
+  .section-line { width: 30px; height: 1px; background: var(--marron); margin-bottom: 20px; }
+  .card { background: #2A2826; border-radius: 10px; padding: 18px; margin-bottom: 14px; border: 1px solid #3a3633; }
+  .card-title { font-size: 12px; font-weight: 700; color: var(--beige); letter-spacing: 1px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .card-title .step-badge { background: var(--marron); color: var(--chalk); width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+  label { display: block; font-size: 11px; font-weight: 600; color: var(--gris); letter-spacing: 0.5px; margin-bottom: 6px; margin-top: 14px; }
+  label:first-of-type { margin-top: 0; }
+  input[type="text"], input[type="date"], input[type="number"], select, textarea { width: 100%; background: #1a1816; border: 1px solid #3a3633; border-radius: 8px; padding: 13px 14px; color: var(--chalk); font-size: 15px; -webkit-appearance: none; appearance: none; outline: none; transition: border-color 0.2s; }
+  input:focus, select:focus, textarea:focus { border-color: var(--marron); }
+  input[type="date"] { color-scheme: dark; }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239B826A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+  select option { background: #2A2826; }
+  textarea { resize: none; height: 72px; font-family: inherit; }
+  .search-wrap { position: relative; }
+  .search-wrap input { padding-left: 38px; }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gris); font-size: 16px; pointer-events: none; }
+  .search-results { background: #1a1816; border: 1px solid var(--marron); border-top: none; border-radius: 0 0 8px 8px; max-height: 200px; overflow-y: auto; display: none; }
+  .search-results.open { display: block; }
+  .search-result-item { padding: 12px 14px; font-size: 14px; cursor: pointer; border-bottom: 1px solid #2a2826; color: var(--chalk); }
+  .search-result-item:last-child { border-bottom: none; }
+  .search-result-item:active { background: #2a2826; color: var(--beige); }
+  .search-result-item em { color: var(--marron); font-style: normal; font-weight: 600; }
+  .toggle-group { display: flex; gap: 10px; }
+  .toggle-btn { flex: 1; padding: 13px; border: 1px solid #3a3633; border-radius: 8px; background: #1a1816; color: var(--gris); font-size: 15px; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.15s; }
+  .toggle-btn.active { background: var(--marron); border-color: var(--marron); color: var(--chalk); }
+  .btn { width: 100%; padding: 16px; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; letter-spacing: 1px; cursor: pointer; transition: all 0.15s; margin-top: 6px; }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--beige); color: var(--carbon); }
+  .btn-secondary { background: #2A2826; color: var(--beige); border: 1px solid var(--marron); }
+  .btn-danger { background: transparent; color: var(--red); border: 1px solid var(--red); }
+  .btn-success { background: var(--green); color: white; }
+  .empleado-row { background: #1a1816; border: 1px solid #3a3633; border-radius: 8px; padding: 14px; margin-bottom: 10px; position: relative; border-left: 3px solid var(--marron); }
+  .empleado-nombre { font-size: 14px; font-weight: 600; color: var(--chalk); margin-bottom: 4px; padding-right: 30px; }
+  .empleado-detalle { font-size: 12px; color: var(--gris); }
+  .empleado-total { font-size: 13px; color: var(--marron); margin-top: 4px; font-weight: 600; }
+  .empleado-delete { position: absolute; top: 12px; right: 12px; background: none; border: none; color: var(--gris); font-size: 18px; cursor: pointer; padding: 4px; }
+  .empleado-delete:active { color: var(--red); }
+  .add-emp-form { background: #232120; border: 1px dashed var(--marron); border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+  .resumen-evento { background: #2A2826; border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+  .resumen-evento-nombre { font-size: 16px; font-weight: 700; color: var(--chalk); margin-bottom: 4px; }
+  .resumen-evento-meta { font-size: 12px; color: var(--gris); margin-bottom: 12px; }
+  .resumen-empleado { padding: 8px 0; border-top: 1px solid #3a3633; display: flex; justify-content: space-between; align-items: center; }
+  .resumen-empleado-info { font-size: 13px; color: var(--chalk); }
+  .resumen-empleado-meta { font-size: 11px; color: var(--gris); margin-top: 2px; }
+  .resumen-empleado-total { font-size: 14px; font-weight: 700; color: var(--beige); }
+  .success-icon { font-size: 56px; text-align: center; margin: 30px 0 16px; }
+  .success-title { font-size: 22px; font-weight: 700; text-align: center; color: var(--chalk); margin-bottom: 8px; }
+  .success-sub { font-size: 14px; color: var(--gris); text-align: center; margin-bottom: 30px; line-height: 1.5; }
+  .progress-bar { height: 3px; background: #3a3633; border-radius: 2px; margin-bottom: 24px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--marron); border-radius: 2px; transition: width 0.3s ease; }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--marron); color: var(--chalk); padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; white-space: nowrap; transition: transform 0.3s ease; z-index: 999; box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .divider { height: 1px; background: #3a3633; margin: 20px 0; }
+  .tabs { display: flex; background: #141210; border-radius: 8px; padding: 4px; margin-bottom: 20px; }
+  .tab { flex: 1; padding: 10px; text-align: center; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; border-radius: 6px; cursor: pointer; color: var(--gris); transition: all 0.15s; }
+  .tab.active { background: var(--marron); color: var(--chalk); }
+  .badge { display: inline-block; background: var(--marron); color: var(--chalk); font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; margin-left: 4px; vertical-align: middle; }
+  .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-eventos { text-align: center; padding: 16px; color: var(--gris); font-size: 13px; }
+  .eventos-error { background: #2a1a1a; border: 1px solid var(--red); border-radius: 8px; padding: 12px 14px; font-size: 13px; color: #ff8a80; margin-bottom: 10px; }
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--gris); font-size: 14px; line-height: 1.6; }
+  .empty-state .emoji { font-size: 36px; margin-bottom: 12px; display: block; }
+  .evento-info-box { background: #232120; border: 1px solid var(--marron); border-radius: 8px; padding: 12px 14px; margin-top: 8px; display: none; }
+  .evento-info-box .evento-fecha { font-size: 12px; color: var(--gris); }
+  .evento-info-box .evento-nombre { font-size: 14px; font-weight: 600; color: var(--beige); margin-top: 2px; }
+  .config-info { background: #232120; border: 1px solid #3a3633; border-radius: 8px; padding: 16px; font-size: 13px; color: var(--gris); line-height: 1.6; margin-bottom: 14px; }
+  .config-info strong { color: var(--beige); }
+  .live-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; color: var(--green); font-weight: 600; letter-spacing: 0.5px; margin-left: 8px; }
+  .live-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; }
+  .cierre-card { background: #2A2826; border-radius: 10px; padding: 18px; margin-top: 14px; border: 1px solid var(--marron); }
+  .cierre-card .card-title { color: var(--beige); margin-bottom: 16px; }
+  .cierre-resultado { border-radius: 10px; padding: 16px; margin-top: 16px; text-align: center; }
+  .cierre-resultado.sobrante { background: rgba(76,175,80,0.15); border: 1px solid var(--green); }
+  .cierre-resultado.faltante { background: rgba(229,57,53,0.15); border: 1px solid var(--red); }
+  .cierre-resultado.exacto { background: rgba(255,193,7,0.15); border: 1px solid var(--yellow); }
+  .cierre-resultado-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; margin-bottom: 4px; }
+  .cierre-resultado-valor { font-size: 24px; font-weight: 700; }
+  .cierre-resultado.sobrante .cierre-resultado-label { color: var(--green); }
+  .cierre-resultado.sobrante .cierre-resultado-valor { color: var(--green); }
+  .cierre-resultado.faltante .cierre-resultado-label { color: var(--red); }
+  .cierre-resultado.faltante .cierre-resultado-valor { color: var(--red); }
+  .cierre-resultado.exacto .cierre-resultado-label { color: var(--yellow); }
+  .cierre-resultado.exacto .cierre-resultado-valor { color: var(--yellow); }
+  .cierre-linea { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 13px; }
+  .cierre-linea-label { color: var(--gris); }
+  .cierre-linea-valor { color: var(--chalk); font-weight: 600; }
+  .cierre-sep { height: 1px; background: #3a3633; margin: 4px 0; }
+  .cierre-hist-item { background: #1a1816; border: 1px solid #3a3633; border-radius: 8px; padding: 14px; margin-bottom: 10px; }
+  .cierre-hist-evento { font-size: 14px; font-weight: 600; color: var(--chalk); margin-bottom: 2px; }
+  .cierre-hist-meta { font-size: 11px; color: var(--gris); margin-bottom: 8px; }
+  .cierre-hist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .cierre-hist-cell { background: #232120; border-radius: 6px; padding: 8px 10px; }
+  .cierre-hist-cell-label { font-size: 10px; color: var(--gris); letter-spacing: 0.5px; }
+  .cierre-hist-cell-value { font-size: 14px; font-weight: 700; color: var(--chalk); margin-top: 2px; }
+  .cierre-hist-estado { grid-column: 1 / -1; text-align: center; padding: 10px; border-radius: 6px; }
+  .cierre-hist-estado.sobrante { background: rgba(76,175,80,0.12); }
+  .cierre-hist-estado.faltante { background: rgba(229,57,53,0.12); }
+  .cierre-hist-estado.exacto { background: rgba(255,193,7,0.12); }
+  .cierre-hist-estado-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; }
+  .cierre-hist-estado-valor { font-size: 16px; font-weight: 700; margin-top: 2px; }
+  .cierre-hist-estado.sobrante .cierre-hist-estado-label,
+  .cierre-hist-estado.sobrante .cierre-hist-estado-valor { color: var(--green); }
+  .cierre-hist-estado.faltante .cierre-hist-estado-label,
+  .cierre-hist-estado.faltante .cierre-hist-estado-valor { color: var(--red); }
+  .cierre-hist-estado.exacto .cierre-hist-estado-label,
+  .cierre-hist-estado.exacto .cierre-hist-estado-valor { color: var(--yellow); }
+  .input-money { font-size: 18px; font-weight: 600; text-align: right; letter-spacing: 0.5px; }
+  .version-btn { background: none; border: 1px solid #3a3633; border-radius: 6px; color: var(--gris); font-size: 9px; padding: 4px 8px; cursor: pointer; letter-spacing: 0.5px; margin-top: 4px; }
+  .version-btn:active { background: #2a2826; color: var(--chalk); }
+  .detalle-back { background: none; border: none; color: var(--marron); font-size: 14px; font-weight: 600; cursor: pointer; padding: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
+  .detalle-back:active { opacity: 0.7; }
+  .detalle-emp-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #3a3633; }
+  .detalle-emp-row:last-child { border-bottom: none; }
+  .detalle-emp-name { font-size: 13px; font-weight: 600; color: var(--chalk); }
+  .detalle-emp-meta { font-size: 11px; color: var(--gris); margin-top: 2px; }
+  .detalle-emp-total { font-size: 14px; font-weight: 700; color: var(--beige); white-space: nowrap; }
+  .cierre-hist-item.clickable { cursor: pointer; transition: border-color 0.15s; }
+  .cierre-hist-item.clickable:active { border-color: var(--marron); }
+  .nuevo-emp-box { background: #1a1816; border: 1px solid var(--marron); border-radius: 8px; padding: 14px; margin-top: 10px; animation: slideDown 0.2s ease; }
+  .nuevo-emp-box label { margin-top: 10px; }
+  .nuevo-emp-box label:first-child { margin-top: 0; }
+  .nuevo-emp-hint { font-size: 10px; color: var(--marron); margin-top: 4px; font-weight: 600; letter-spacing: 0.3px; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+  .info-fijo { background: rgba(155,130,106,0.15); border: 1px solid var(--marron); border-radius: 6px; padding: 8px 10px; margin-top: 8px; font-size: 11px; color: var(--beige); }
+  .info-fijo strong { color: var(--chalk); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-brand">NORCHAMP</div>
+    <div class="header-sub">REGISTRO DE PERSONAL</div>
+    <button class="version-btn" onclick="forzarRecarga()">v1.0 · Actualizar</button>
+  </div>
+  <svg class="header-logo" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="40" cy="40" r="32" stroke="#E1D9C8" stroke-width="2" fill="none"/>
+    <path d="M28 28 L28 52 L52 28 L52 52" stroke="#E1D9C8" stroke-width="3" stroke-linecap="round" fill="none"/>
+  </svg>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- HOME -->
+<div class="screen active" id="screen-home">
+  <div style="margin-bottom:24px; margin-top:8px;">
+    <div class="section-title">Bienvenida</div>
+    <div class="section-line"></div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('nuevo', this)">Nuevo</div>
+    <div class="tab" onclick="switchTab('cierres', this)">Cierres</div>
+  </div>
+
+  <div id="tab-nuevo">
+    <div class="card">
+      <div class="card-title"><span class="step-badge">1</span> Datos del evento</div>
+      <label>Encargada</label>
+      <select id="home-encargado" onchange="cargarEventos()">
+        <option value="">— Seleccioná —</option>
+        <option>Agustina</option>
+      </select>
+      <label>Evento</label>
+      <div id="eventos-loading" class="loading-eventos"><span class="spinner"></span> Cargando eventos...</div>
+      <div id="eventos-error" class="eventos-error" style="display:none;">⚠️ No se pudieron cargar los eventos.<br><span style="font-size:12px;">Verificá tu conexión o usá el campo manual abajo.</span></div>
+      <select id="home-evento-select" style="display:none;" onchange="onEventoSelect(this.value)">
+        <option value="">— Seleccioná un evento —</option>
+      </select>
+      <div class="evento-info-box" id="evento-info-box">
+        <div class="evento-fecha" id="evento-info-fecha"></div>
+        <div class="evento-nombre" id="evento-info-nombre"></div>
+      </div>
+      <div style="margin-top:10px;">
+        <div style="font-size:11px; color:var(--gris); margin-bottom:6px;">¿No está en la lista? Escribilo manualmente:</div>
+        <input type="text" id="home-evento-manual" placeholder="Nombre del evento..." autocomplete="off" oninput="onManualEvento(this.value)">
+      </div>
+      <label>Fecha del evento</label>
+      <input type="date" id="home-fecha">
+    </div>
+    <button class="btn btn-primary" onclick="iniciarEvento()">COMENZAR CARGA →</button>
+    <button class="btn btn-secondary" style="margin-top:10px;" onclick="recargarEventos()">↻ Recargar eventos</button>
+  </div>
+
+  <div id="tab-cierres" style="display:none;">
+    <div id="cierres-loading" class="loading-eventos" style="display:none;"><span class="spinner"></span> Cargando cierres...</div>
+    <div id="list-cierres"><div class="empty-state"><span class="emoji">📊</span>Cargá los cierres para ver el historial.</div></div>
+    <button class="btn btn-secondary" style="margin-top:10px;" onclick="recargarCierres()">↻ Actualizar cierres</button>
+  </div>
+</div>
+
+<!-- CARGA -->
+<div class="screen" id="screen-carga">
+  <div class="progress-bar"><div class="progress-fill" style="width:33%"></div></div>
+  <div style="display:flex; align-items:center; margin-bottom:6px;">
+    <div class="section-title" id="carga-evento-label" style="margin-bottom:0;">EVENTO</div>
+    <span class="live-badge" id="live-badge" style="display:none;"><span class="live-dot"></span> DATOS EN VIVO</span>
+  </div>
+  <div class="section-line"></div>
+  <div id="lista-empleados"></div>
+  <div class="add-emp-form">
+    <div style="font-size:12px; color:var(--gris); font-weight:700; letter-spacing:1px; margin-bottom:14px;">+ AGREGAR EMPLEADO</div>
+    <label>Empleado</label>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="emp-search" placeholder="Escribí el nombre..." autocomplete="off" oninput="searchEmpleado(this.value)" onfocus="searchEmpleado(this.value)">
+      <div class="search-results" id="search-results"></div>
+    </div>
+    <input type="hidden" id="emp-selected">
+
+    <div id="nuevo-emp-wrap" class="nuevo-emp-box" style="display:none;">
+      <label style="margin-top:0;">Nombre completo del nuevo empleado</label>
+      <input type="text" id="nuevo-emp-nombre" placeholder="Ej: Juan Pérez" autocomplete="off">
+      <div class="nuevo-emp-hint">⚡ Se va a sumar a la nómina automáticamente</div>
+    </div>
+
+    <label>Función</label>
+    <select id="emp-funcion" onchange="onFuncionChange()">
+      <option value="">— Seleccioná —</option>
+    </select>
+
+    <div id="info-fijo-box" class="info-fijo" style="display:none;">
+      💰 <strong id="info-fijo-text"></strong> · Es un valor fijo por jornada, las horas no afectan el cálculo.
+    </div>
+
+    <label id="label-horas">Horas trabajadas</label>
+    <select id="emp-horas">
+      <option value="">— Seleccioná —</option>
+      <option>1</option><option>2</option><option>3</option><option>4</option>
+      <option>5</option><option>6</option><option>7</option><option>8</option>
+      <option>9</option><option>10</option><option>11</option><option>12</option>
+      <option>13</option><option>14</option><option>15</option><option>16</option>
+    </select>
+
+    <label>¿Lleva viático?</label>
+    <div class="toggle-group">
+      <div class="toggle-btn active" id="via-no" onclick="setViatico('No')">No</div>
+      <div class="toggle-btn" id="via-si" onclick="setViatico('Sí')">Sí</div>
+    </div>
+    <div id="viatico-wrap" style="display:none; margin-top:14px;">
+      <label style="margin-top:0;">Monto del viático ($)</label>
+      <input type="number" id="emp-viatico" class="input-money" placeholder="0" min="0" inputmode="numeric">
+    </div>
+
+    <label>Observaciones (opcional)</label>
+    <textarea id="emp-obs" placeholder="Ej: Comida personal $5.000"></textarea>
+    <button class="btn btn-secondary" style="margin-top:16px;" onclick="agregarEmpleado()">+ AGREGAR A LA LISTA</button>
+  </div>
+  <div class="divider"></div>
+  <button class="btn btn-primary" onclick="irAResumen()">VER RESUMEN →</button>
+  <button class="btn btn-danger" style="margin-top:10px;" onclick="cancelarEvento()">Cancelar</button>
+</div>
+
+<!-- RESUMEN + CIERRE -->
+<div class="screen" id="screen-resumen">
+  <div class="progress-bar"><div class="progress-fill" style="width:66%"></div></div>
+  <div class="section-title">Revisá antes de enviar</div>
+  <div class="section-line"></div>
+  <div id="resumen-contenido"></div>
+
+  <div class="cierre-card">
+    <div class="card-title"><span class="step-badge">$</span> Cierre del evento</div>
+    <label style="margin-top:0;">Gastos extras del evento ($)</label>
+    <input type="number" id="cierre-gastos" class="input-money" placeholder="0" min="0" inputmode="numeric" oninput="calcularCierre()">
+    <div style="font-size:10px; color:var(--gris); margin-top:4px;">Ej: comidas, ubers, estacionamiento, etc.</div>
+    <label>Dinero recibido ($)</label>
+    <input type="number" id="cierre-recibido" class="input-money" placeholder="0" min="0" inputmode="numeric" oninput="calcularCierre()">
+    <label>Observaciones del cierre (opcional)</label>
+    <textarea id="cierre-obs" placeholder="Ej: Se pagó uber aparte por MP"></textarea>
+    <div id="cierre-resultado-wrap" style="display:none;">
+      <div class="cierre-sep" style="margin-top:16px;"></div>
+      <div class="cierre-linea"><span class="cierre-linea-label">Total sueldos</span><span class="cierre-linea-valor" id="cierre-total-sueldos">$0</span></div>
+      <div class="cierre-linea"><span class="cierre-linea-label">Gastos extras</span><span class="cierre-linea-valor" id="cierre-total-gastos">$0</span></div>
+      <div class="cierre-sep"></div>
+      <div class="cierre-linea"><span class="cierre-linea-label" style="font-weight:700; color:var(--chalk);">Total utilizado</span><span class="cierre-linea-valor" id="cierre-total-utilizado" style="font-size:15px;">$0</span></div>
+      <div class="cierre-linea"><span class="cierre-linea-label">Dinero recibido</span><span class="cierre-linea-valor" id="cierre-total-recibido">$0</span></div>
+      <div id="cierre-resultado-box" class="cierre-resultado">
+        <div class="cierre-resultado-label" id="cierre-estado-label">—</div>
+        <div class="cierre-resultado-valor" id="cierre-estado-valor">$0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <button class="btn btn-success" id="btn-enviar" onclick="enviarDatos()">✓ CONFIRMAR Y ENVIAR</button>
+  <button class="btn btn-secondary" style="margin-top:10px;" onclick="showScreen('carga')">← VOLVER A EDITAR</button>
+</div>
+
+<!-- ÉXITO -->
+<div class="screen" id="screen-exito">
+  <div class="success-icon">✅</div>
+  <div class="success-title">¡Enviado!</div>
+  <div class="success-sub" id="exito-msg"></div>
+  <div id="exito-cierre-wrap" class="card" style="display:none;">
+    <div class="card-title">Resumen del cierre</div>
+    <div id="exito-cierre-detalle"></div>
+  </div>
+  <div id="exito-texto-wrap" style="display:none;">
+    <div class="config-info">
+      <strong>Copiá este texto y pegalo en la planilla:</strong>
+      <pre id="exito-texto" style="margin-top:8px; font-size:11px; color:var(--marron); white-space:pre-wrap; word-break:break-word; background:#1a1816; padding:10px; border-radius:4px;"></pre>
+    </div>
+    <button class="btn btn-secondary" style="margin-top:0;" onclick="copiarTexto()">📋 Copiar texto</button>
+  </div>
+  <div class="divider"></div>
+  <button class="btn btn-primary" style="margin-top:10px;" onclick="nuevoEvento()">+ NUEVO EVENTO</button>
+</div>
+
+<script>
+// ⚙️ CONFIGURACIÓN: pegar acá la URL del Web App de Norchamp después de publicar el Apps Script
+const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbztUpOy4KPlST6CQBfiNu0fECHRT8EqcKkmY1Xqc4Ngy6UCiNVqga4Q3LmnuHkSO8m6/exec";
+
+const EMPLEADOS = ["Abigail Sanchez","Agustina Cambaceres","Aldana Milagros López","Alicia Gisel Sosa","Anabela Beatriz Dominguez","Andrea Edith Romero","Andrés Escudero","Angel Emanuel Gauna","Antonella Alejandra Sanabria","Antonella Camejo","Antonella Coppola","Antonio Rubén Suarez","Ariadna Jaimes","Arnaldo Andres Roa","Ayelen Milagros Faundez Muñoz","Bautista Garcia Yañez de Anchorena","Beltrán Casá","Brenda Barrera","Brisa Gabriela Anahi Reynoso","Brisa Silva","Camila Antonella Sofio","Camila Monserrat Miranda Caballero","Camila Nahir Prezel","Candela Soledad Amaya","Carlos Maximiliano Sofio","Carmen Noemí Salmi Ibarra","Celeste López","Celina Ruiz","Cesar Agustin Peñaloza","Cinthia Macarena leguiza","Cintia Beatriz Paredes","Cintia Carolina Batalla","Claudia Noemí Bareiro","Daiana Candela Fernandez","Daiana Candela Fernandez","Daiana Fiorella Ceballos","Daiana Gisela Contreras","Daiana Rocycela Sosa","Dalma Yanella Amaya","Damaris Melina Leonardi","Daniel Alpino","Daniela Beatriz Bareiro","David Nieto","Delicia Prezel","Denisse Luna López Espinosa","Eduardo Maximiliano Arce","Elisa Pertiné","Eloisa Fini Carrieri","Emanuel Antonio Barrera","Emiliano Cimuro","Esteban Pascual Mendoza","Estefania Ramirez","Evelin Jenifer Nieto","Ezequiel Torija","Fabián Orlando Ruiz","Federico Pagalday","Fernando Fabián Mendoza","Florencia Ramona Toledo","Francisco María Páez de la Torre","Franco Daniel Soto","Franco Ezequiel Velázquez","Franco Iván Fernández","Gastón Luna","Gerardo Fernández","Gisela Analía Schinca","Gisela Analía schinca","Gonzalo Fabián Muñoz","Guido Nicolas Maximiliano","Guillermina puglia","Gustavo Pagano","Génesis Candela Carnales","Ian Torres","Iara Ludmila Sánchez","Ignacio Bautista Colombo","Isabel María Dorado","Isabella Carratelli","Ivana mariquena Prieto","Jacqueline Florencia Serapio","Jazmin Vanoni","Jessica Stefanía Esquivel","Johana Castillo","Jonathan Brian Toledo","Josefina Dorado","Josefina Roggero","José Antonio Barrera","Juan Francisco Constantino","Juan Pablo Quinci","Juana Martin","Julia De La Arena","Kevin Alfaro","Lautaro Maldonado","Leandro Batalla","Leandro Nahuel Ledesma","Leandro Zalazar","Leila Belén Rivero","Leonel Jesús Arroyo","Luca Godoy","Lucas Castro","Lucas Matías Bisconti","Lucia jael Saldaño Mastrolorenzo","Ludmila Insaurralde","Luis Ariel Castro","Luz Candela Rojas","Luz Constanza Caceres Roa","Luz Federica Abigail Prieto","Maia Selena Rivero","Maia Valentina Escobar","Malena Alanis Darán","Malena Scarioni","Malvina Soledad Nieto","Marcelo Alberto Molina","Margarita Correa","Maria Angelica Fatti","Mariana Galeano","Marina Elizabeth Cajal","Mario Ezequiel Medina","Marisol Velázquez","Martina Pereyra","María Josefina Pesavento","Matias Javier Williams","Matias Vera","Matías Viacava","Maximiliano Fernandez","Maximiliano Gabriel Fernández","Mayra Lorena Espíndola","Mayra Lorena Espíndola","Melani Arriscal","Micaela Abigail Gomez","Milagros Lucero","Morena Ailen Sanchez","Nancy Beatriz Sosa","Nayla Saffores","Nazarena Morena Feliz","Nicole Berger","Noelia Agustina Paniagua","Nuevo empleado","Oriana Belén Dahir","Patricio Barry","Rafael Andrés Pérez","Ricardo Emanuel Prezel","Roberto Cayetano Cammarano","Rocio Daiana Martinez","Rocio Galván","Rodrigo Fernández Duarte","Rodrigo Fernández Duarte","Romina Jeanette Lopez","Román Alexis Ibáñez","Santiago Israel Sánchez","Santiago Schneider","Selene Prezel","Sharon Cinthia Cajal","Silvana Beatriz Cimino","Silvana Fiorella Ceballos","Valeria Araceli Elizabeth Gauna","Vanina Ailen Mansilla","Verónica Estigarribia Escobar","Waltera Gastón Ciro Barrera","Yamil Abigail Sanchez","Yamila Melany Acevedo","Yanina Soledad Ramírez","Zaira Macarena Nieto","Zenón Lobo Marquez","Zoe Tatiana Prezel"];
+
+// Funciones FIJAS por jornada (no se multiplican por horas)
+const FUNCIONES_FIJAS = {
+  "Encargada Agustina": 200000,
+  "Encargado Gustavo": 250000,
+  "Encargado Pato": 90000
+};
+
+// Funciones POR HORA (se multiplican por las horas trabajadas)
+const TARIFAS_HORA_FALLBACK = {
+  "Encargado/a por Hora": 10000,
+  "Parrillero": 5500,
+  "Freidora": 5500,
+  "Planchero": 5500,
+  "Mozo": 5000,
+  "Moza Sub Encargada": 7000
+};
+
+let TARIFAS_HORA = { ...TARIFAS_HORA_FALLBACK };
+let FUNCIONES_FIJAS_LIVE = { ...FUNCIONES_FIJAS };
+
+let currentEvento = null;
+let empleadosCargados = [];
+let viaticoState = 'No';
+let eventosCache = [];
+let eventoSeleccionado = null;
+let datosEnVivo = false;
+let cierresCache = [];
+let esNuevoEmpleado = false;
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('home-fecha').value = new Date().toISOString().split('T')[0];
+  poblarSelectFunciones();
+  cargarEventos();
+});
+
+function poblarSelectFunciones() {
+  const sel = document.getElementById('emp-funcion');
+  sel.innerHTML = '<option value="">— Seleccioná —</option>';
+  // Primero las fijas
+  Object.keys(FUNCIONES_FIJAS_LIVE).forEach(f => {
+    sel.innerHTML += `<option value="${f}">⭐ ${f} (fijo)</option>`;
+  });
+  // Después las por hora
+  Object.keys(TARIFAS_HORA).forEach(f => {
+    sel.innerHTML += `<option value="${f}">${f}</option>`;
+  });
+}
+
+function onFuncionChange() {
+  const funcion = document.getElementById('emp-funcion').value;
+  const infoBox = document.getElementById('info-fijo-box');
+  const labelHoras = document.getElementById('label-horas');
+  const selectHoras = document.getElementById('emp-horas');
+  if (FUNCIONES_FIJAS_LIVE[funcion] !== undefined) {
+    infoBox.style.display = 'block';
+    document.getElementById('info-fijo-text').textContent = '$' + formatNum(FUNCIONES_FIJAS_LIVE[funcion]);
+    labelHoras.textContent = 'Horas trabajadas (informativo · no afecta el pago)';
+    labelHoras.style.color = 'var(--marron)';
+  } else {
+    infoBox.style.display = 'none';
+    labelHoras.textContent = 'Horas trabajadas';
+    labelHoras.style.color = 'var(--gris)';
+  }
+}
+
+async function cargarEventos() {
+  document.getElementById('eventos-loading').style.display = 'block';
+  document.getElementById('eventos-error').style.display = 'none';
+  document.getElementById('home-evento-select').style.display = 'none';
+  datosEnVivo = false;
+  try {
+    const res = await fetch(WEBHOOK_URL, { method: 'GET' });
+    const data = await res.json();
+    if (!data.ok || !data.eventos) throw new Error('Sin datos');
+    eventosCache = data.eventos;
+    poblarSelectEventos(data.eventos);
+    if (data.tarifasHora && Object.keys(data.tarifasHora).length > 0) {
+      TARIFAS_HORA = { ...TARIFAS_HORA_FALLBACK, ...data.tarifasHora };
+      datosEnVivo = true;
+    }
+    if (data.funcionesFijas && Object.keys(data.funcionesFijas).length > 0) {
+      FUNCIONES_FIJAS_LIVE = { ...FUNCIONES_FIJAS, ...data.funcionesFijas };
+      datosEnVivo = true;
+    }
+    poblarSelectFunciones();
+    if (data.cierres && data.cierres.length > 0) cierresCache = data.cierres;
+  } catch(e) {
+    document.getElementById('eventos-loading').style.display = 'none';
+    document.getElementById('eventos-error').style.display = 'block';
+    document.getElementById('home-evento-select').style.display = 'block';
+    TARIFAS_HORA = { ...TARIFAS_HORA_FALLBACK };
+    FUNCIONES_FIJAS_LIVE = { ...FUNCIONES_FIJAS };
+    poblarSelectFunciones();
+  }
+}
+
+function recargarEventos() {
+  eventoSeleccionado = null;
+  document.getElementById('evento-info-box').style.display = 'none';
+  document.getElementById('home-evento-select').value = '';
+  document.getElementById('home-evento-manual').value = '';
+  cargarEventos();
+  showToast('↻ Recargando eventos...');
+}
+
+function poblarSelectEventos(eventos) {
+  document.getElementById('eventos-loading').style.display = 'none';
+  const select = document.getElementById('home-evento-select');
+  select.innerHTML = '<option value="">— Seleccioná un evento —</option>';
+  if (eventos.length === 0) {
+    select.innerHTML += '<option disabled>No hay eventos cargados en la planilla</option>';
+  } else {
+    eventos.forEach((ev, i) => {
+      const label = ev.fecha ? `${ev.fecha} · ${ev.nombre}` : ev.nombre;
+      select.innerHTML += `<option value="${i}">${label}</option>`;
+    });
+  }
+  select.style.display = 'block';
+}
+
+function onEventoSelect(val) {
+  const box = document.getElementById('evento-info-box');
+  if (val === '') { eventoSeleccionado = null; box.style.display = 'none'; return; }
+  const ev = eventosCache[parseInt(val)];
+  if (!ev) return;
+  eventoSeleccionado = ev;
+  document.getElementById('home-evento-manual').value = '';
+  document.getElementById('evento-info-fecha').textContent = ev.fecha || '';
+  document.getElementById('evento-info-nombre').textContent = ev.nombre;
+  box.style.display = 'block';
+  if (ev.fecha) {
+    const parts = ev.fecha.split('/');
+    if (parts.length === 3) document.getElementById('home-fecha').value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+  }
+}
+
+function onManualEvento(val) {
+  if (val.trim()) {
+    document.getElementById('home-evento-select').value = '';
+    document.getElementById('evento-info-box').style.display = 'none';
+    eventoSeleccionado = null;
+  }
+}
+
+async function cargarCierres() {
+  if (cierresCache.length > 0) { renderCierres(cierresCache); return; }
+  const loading = document.getElementById('cierres-loading');
+  const container = document.getElementById('list-cierres');
+  loading.style.display = 'block'; container.innerHTML = '';
+  try {
+    const res = await fetch(WEBHOOK_URL, { method: 'GET' });
+    const data = await res.json();
+    if (!data.ok || !data.cierres) throw new Error('Sin datos');
+    cierresCache = data.cierres; loading.style.display = 'none'; renderCierres(data.cierres);
+  } catch(e) {
+    loading.style.display = 'none';
+    container.innerHTML = '<div class="empty-state"><span class="emoji">⚠️</span>No se pudieron cargar los cierres.<br>Verificá tu conexión.</div>';
+  }
+}
+
+async function recargarCierres() {
+  cierresCache = [];
+  const loading = document.getElementById('cierres-loading');
+  const container = document.getElementById('list-cierres');
+  loading.style.display = 'block'; container.innerHTML = ''; showToast('↻ Recargando cierres...');
+  try {
+    const res = await fetch(WEBHOOK_URL, { method: 'GET' });
+    const data = await res.json();
+    if (!data.ok || !data.cierres) throw new Error('Sin datos');
+    cierresCache = data.cierres;
+    if (data.eventos) eventosCache = data.eventos;
+    if (data.tarifasHora) TARIFAS_HORA = { ...TARIFAS_HORA_FALLBACK, ...data.tarifasHora };
+    if (data.funcionesFijas) FUNCIONES_FIJAS_LIVE = { ...FUNCIONES_FIJAS, ...data.funcionesFijas };
+    loading.style.display = 'none'; renderCierres(data.cierres);
+  } catch(e) {
+    loading.style.display = 'none';
+    container.innerHTML = '<div class="empty-state"><span class="emoji">⚠️</span>No se pudieron cargar los cierres.<br>Verificá tu conexión.</div>';
+  }
+}
+
+function renderCierres(cierres) {
+  const container = document.getElementById('list-cierres');
+  if (!cierres || cierres.length === 0) {
+    container.innerHTML = '<div class="empty-state"><span class="emoji">📊</span>No hay cierres registrados aún.</div>';
+    return;
+  }
+  const saved = JSON.parse(localStorage.getItem('nch_eventos') || '[]');
+  const savedMap = {};
+  saved.forEach(ev => { const key = ev.evento.trim().toLowerCase(); if (!savedMap[key]) savedMap[key] = ev; });
+  const sorted = [...cierres].sort((a, b) => {
+    const parseDate = (f) => {
+      if (!f) return 0;
+      const parts = f.split('/');
+      if (parts.length === 3) return new Date(parts[2], parts[1] - 1, parts[0]).getTime();
+      return 0;
+    };
+    return parseDate(b.fecha) - parseDate(a.fecha);
+  });
+  container.innerHTML = sorted.map(c => {
+    const estado = c.estado || '—';
+    const estadoClass = estado === 'Sobrante' ? 'sobrante' : estado === 'Faltante' ? 'faltante' : estado === 'Exacto' ? 'exacto' : '';
+    const devolucion = c.devolucion || 0;
+    const key = c.evento.trim().toLowerCase();
+    const tieneDetalle = !!savedMap[key];
+    return `<div class="cierre-hist-item ${tieneDetalle ? 'clickable' : ''}" ${tieneDetalle ? `onclick="verDetalleCierre('${key.replace(/'/g, "\\'")}')"` : ''}>
+        <div class="cierre-hist-evento">${c.evento} ${tieneDetalle ? '<span style="font-size:11px; color:var(--marron);">▸ Ver detalle</span>' : ''}</div>
+        <div class="cierre-hist-meta">${c.fecha || ''} · ${c.encargado || '—'}</div>
+        <div class="cierre-hist-grid">
+          <div class="cierre-hist-cell"><div class="cierre-hist-cell-label">Sueldos</div><div class="cierre-hist-cell-value">$${formatNum(c.totalSueldos || 0)}</div></div>
+          <div class="cierre-hist-cell"><div class="cierre-hist-cell-label">Gastos extras</div><div class="cierre-hist-cell-value">$${formatNum(c.gastosExtras || 0)}</div></div>
+          <div class="cierre-hist-cell"><div class="cierre-hist-cell-label">Dinero recibido</div><div class="cierre-hist-cell-value">$${formatNum(c.dineroRecibido || 0)}</div></div>
+          <div class="cierre-hist-cell"><div class="cierre-hist-cell-label">Total utilizado</div><div class="cierre-hist-cell-value">$${formatNum(c.totalUtilizado || 0)}</div></div>
+          ${estadoClass ? `<div class="cierre-hist-estado ${estadoClass}"><div class="cierre-hist-estado-label">${estado.toUpperCase()}</div><div class="cierre-hist-estado-valor">$${formatNum(Math.abs(devolucion))}</div></div>` : `<div class="cierre-hist-estado"><div class="cierre-hist-estado-label" style="color:var(--gris);">SIN CIERRE</div></div>`}
+        </div>
+        ${c.observaciones ? `<div style="font-size:11px; color:var(--gris); margin-top:8px; padding-top:8px; border-top:1px solid #3a3633;">📝 ${c.observaciones}</div>` : ''}
+      </div>`;
+  }).join('');
+}
+
+function verDetalleCierre(eventoKey) {
+  const saved = JSON.parse(localStorage.getItem('nch_eventos') || '[]');
+  const ev = saved.find(e => e.evento.trim().toLowerCase() === eventoKey);
+  if (!ev) return showToast('⚠️ No se encontró el detalle');
+  const container = document.getElementById('list-cierres');
+  const totalSueldos = ev.rows.reduce((a, r) => a + (r.total || 0), 0);
+  const cierre = ev.cierre || {};
+  container.innerHTML = `<button class="detalle-back" onclick="renderCierres(cierresCache)">← Volver a cierres</button>
+    <div class="resumen-evento"><div class="resumen-evento-nombre">${ev.evento}</div><div class="resumen-evento-meta">${formatFecha(ev.fecha)} · ${ev.encargado}</div>
+      ${ev.rows.map(r => `<div class="detalle-emp-row"><div><div class="detalle-emp-name">${r.empleado}</div><div class="detalle-emp-meta">${r.funcion} · ${r.horas}hs${r.obs ? ` · ${r.obs}` : ''}</div>${r.total ? `<div class="detalle-emp-meta">${r.esFijo ? 'Fijo' : 'Horas'}: $${formatNum(r.subtotalSueldo || 0)}${r.viatico > 0 ? ` · Viático: $${formatNum(r.viatico)}` : ''}</div>` : ''}</div><div class="detalle-emp-total">${r.total ? '$' + formatNum(r.total) : '—'}</div></div>`).join('')}
+      <div style="border-top:2px solid var(--marron); margin-top:12px; padding-top:12px;">
+        <div class="cierre-linea"><span class="cierre-linea-label" style="font-weight:700; color:var(--chalk);">Total sueldos</span><span class="cierre-linea-valor" style="font-size:16px;">$${formatNum(totalSueldos)}</span></div>
+        ${cierre.gastosExtras > 0 ? `<div class="cierre-linea"><span class="cierre-linea-label">Gastos extras</span><span class="cierre-linea-valor">$${formatNum(cierre.gastosExtras)}</span></div>` : ''}
+        ${cierre.dineroRecibido > 0 ? `<div class="cierre-linea"><span class="cierre-linea-label">Dinero recibido</span><span class="cierre-linea-valor">$${formatNum(cierre.dineroRecibido)}</span></div>
+        <div class="cierre-sep"></div>
+        <div class="cierre-resultado ${cierre.estado === 'Sobrante' ? 'sobrante' : cierre.estado === 'Faltante' ? 'faltante' : 'exacto'}" style="margin-top:8px;"><div class="cierre-resultado-label">${(cierre.estado || '').toUpperCase()}</div><div class="cierre-resultado-valor">$${formatNum(Math.abs(cierre.devolucion || 0))}</div></div>` : ''}
+      </div></div>`;
+  window.scrollTo(0, 0);
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-nuevo').style.display = tab === 'nuevo' ? 'block' : 'none';
+  document.getElementById('tab-cierres').style.display = tab === 'cierres' ? 'block' : 'none';
+  if (tab === 'cierres') cargarCierres();
+}
+
+function iniciarEvento() {
+  const encargado = document.getElementById('home-encargado').value;
+  const fecha = document.getElementById('home-fecha').value;
+  const manual = document.getElementById('home-evento-manual').value.trim();
+  const nombreEvento = eventoSeleccionado ? eventoSeleccionado.nombre : manual;
+  if (!encargado) return showToast('⚠️ Seleccioná la encargada');
+  if (!nombreEvento) return showToast('⚠️ Seleccioná o escribí el evento');
+  if (!fecha) return showToast('⚠️ Ingresá la fecha');
+  currentEvento = { fecha, evento: nombreEvento, encargado };
+  empleadosCargados = []; viaticoState = 'No';
+  document.getElementById('carga-evento-label').textContent = nombreEvento.length > 40 ? nombreEvento.substring(0, 40) + '...' : nombreEvento.toUpperCase();
+  document.getElementById('live-badge').style.display = datosEnVivo ? 'inline-flex' : 'none';
+  renderEmpleados(); resetEmpForm(); showScreen('carga');
+}
+
+function searchEmpleado(query) {
+  const results = document.getElementById('search-results');
+  if (!query || query.length < 1) { results.classList.remove('open'); return; }
+  const q = query.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const matches = EMPLEADOS.filter(e => e.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(q)).slice(0, 8);
+  if (matches.length === 0) {
+    results.innerHTML = '<div class="search-result-item" style="color:var(--gris)">Sin resultados — podés escribir el nombre completo</div>';
+  } else {
+    results.innerHTML = matches.map(m => {
+      const hi = m.replace(new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<em>$1</em>');
+      return `<div class="search-result-item" onmousedown="selectEmpleado('${m.replace(/'/g,"\\'")}')">👤 ${hi}</div>`;
+    }).join('');
+  }
+  results.classList.add('open');
+}
+
+function selectEmpleado(nombre) {
+  document.getElementById('emp-search').value = nombre;
+  document.getElementById('emp-selected').value = nombre;
+  document.getElementById('search-results').classList.remove('open');
+  const esNuevo = nombre.toLowerCase().trim() === 'nuevo empleado';
+  esNuevoEmpleado = esNuevo;
+  const nuevoWrap = document.getElementById('nuevo-emp-wrap');
+  if (esNuevo) {
+    nuevoWrap.style.display = 'block';
+    document.getElementById('nuevo-emp-nombre').value = '';
+    setTimeout(() => document.getElementById('nuevo-emp-nombre').focus(), 100);
+  } else {
+    nuevoWrap.style.display = 'none';
+    document.getElementById('nuevo-emp-nombre').value = '';
+  }
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-wrap')) document.getElementById('search-results').classList.remove('open');
+});
+
+function setViatico(val) {
+  viaticoState = val;
+  document.getElementById('via-no').classList.toggle('active', val === 'No');
+  document.getElementById('via-si').classList.toggle('active', val === 'Sí');
+  document.getElementById('viatico-wrap').style.display = val === 'Sí' ? 'block' : 'none';
+  if (val === 'No') document.getElementById('emp-viatico').value = '';
+}
+
+function agregarEmpleado() {
+  let nombre = document.getElementById('emp-selected').value || document.getElementById('emp-search').value.trim();
+  const funcion = document.getElementById('emp-funcion').value;
+  const horas = document.getElementById('emp-horas').value;
+  const obs = document.getElementById('emp-obs').value.trim();
+  const viaticoMonto = viaticoState === 'Sí' ? parseFloat(document.getElementById('emp-viatico').value || 0) : 0;
+
+  if (esNuevoEmpleado) {
+    const nuevoNombre = document.getElementById('nuevo-emp-nombre').value.trim();
+    if (!nuevoNombre) return showToast('⚠️ Escribí el nombre del nuevo empleado');
+    nombre = nuevoNombre;
+  } else {
+    if (!nombre) return showToast('⚠️ Seleccioná un empleado');
+  }
+
+  if (!funcion) return showToast('⚠️ Seleccioná la función');
+  if (!horas) return showToast('⚠️ Seleccioná las horas');
+  if (viaticoState === 'Sí' && (!viaticoMonto || viaticoMonto <= 0)) return showToast('⚠️ Ingresá el monto del viático');
+
+  const esFijo = FUNCIONES_FIJAS_LIVE[funcion] !== undefined;
+  let subtotalSueldo;
+  if (esFijo) {
+    subtotalSueldo = FUNCIONES_FIJAS_LIVE[funcion];
+  } else {
+    const tarifa = TARIFAS_HORA[funcion] || 0;
+    subtotalSueldo = parseFloat(horas) * tarifa;
+  }
+  const total = subtotalSueldo + viaticoMonto;
+
+  empleadosCargados.push({
+    nombre, funcion, horas: parseFloat(horas),
+    viaticoSiNo: viaticoState, viatico: viaticoMonto,
+    obs, subtotalSueldo, esFijo, total
+  });
+  renderEmpleados(); resetEmpForm();
+  showToast(`✓ ${nombre.split(' ')[0]} agregado`);
+}
+
+function eliminarEmpleado(idx) { empleadosCargados.splice(idx, 1); renderEmpleados(); }
+
+function renderEmpleados() {
+  const container = document.getElementById('lista-empleados');
+  if (empleadosCargados.length === 0) {
+    container.innerHTML = '<div class="empty-state" style="padding:20px 0;"><span class="emoji">👥</span>Aún no agregaste empleados</div>';
+    return;
+  }
+  container.innerHTML = empleadosCargados.map((e, i) => `<div class="empleado-row">
+    <button class="empleado-delete" onclick="eliminarEmpleado(${i})">✕</button>
+    <div class="empleado-nombre">${e.nombre}${e.esFijo ? ' <span class="badge">FIJO</span>' : ''}</div>
+    <div class="empleado-detalle">${e.funcion} · ${e.horas}hs${e.obs ? ` · ${e.obs}` : ''}</div>
+    <div class="empleado-total">$${formatNum(e.total)} ${e.viatico > 0 ? `<span style="font-size:11px; color:var(--gris);">(+ $${formatNum(e.viatico)} viático)</span>` : ''}</div>
+  </div>`).join('');
+}
+
+function resetEmpForm() {
+  document.getElementById('emp-search').value = '';
+  document.getElementById('emp-selected').value = '';
+  document.getElementById('emp-funcion').value = '';
+  document.getElementById('emp-horas').value = '';
+  document.getElementById('emp-obs').value = '';
+  document.getElementById('emp-viatico').value = '';
+  setViatico('No');
+  esNuevoEmpleado = false;
+  document.getElementById('nuevo-emp-wrap').style.display = 'none';
+  document.getElementById('nuevo-emp-nombre').value = '';
+  document.getElementById('info-fijo-box').style.display = 'none';
+  document.getElementById('label-horas').textContent = 'Horas trabajadas';
+  document.getElementById('label-horas').style.color = 'var(--gris)';
+}
+
+function irAResumen() {
+  if (empleadosCargados.length === 0) return showToast('⚠️ Agregá al menos un empleado');
+  const totalEvento = empleadosCargados.reduce((a, e) => a + e.total, 0);
+  document.getElementById('resumen-contenido').innerHTML = `<div class="resumen-evento"><div class="resumen-evento-nombre">${currentEvento.evento}</div><div class="resumen-evento-meta">${formatFecha(currentEvento.fecha)} · ${currentEvento.encargado}</div>
+      ${empleadosCargados.map(e => `<div class="resumen-empleado"><div><div class="resumen-empleado-info">${e.nombre}${e.esFijo ? ' <span class="badge">FIJO</span>' : ''}</div><div class="resumen-empleado-meta">${e.funcion} · ${e.horas}hs${e.obs ? ` · ${e.obs}` : ''}</div><div class="resumen-empleado-meta" style="margin-top:3px;">${e.esFijo ? 'Fijo' : 'Horas'}: $${formatNum(e.subtotalSueldo)}${e.viatico > 0 ? ` · Viático: $${formatNum(e.viatico)}` : ''}</div></div><div class="resumen-empleado-total">$${formatNum(e.total)}</div></div>`).join('')}
+      <div style="border-top:1px solid var(--marron); margin-top:12px; padding-top:12px; display:flex; justify-content:space-between; align-items:center;"><div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--beige);">TOTAL SUELDOS</div><div style="font-size:18px; font-weight:700; color:var(--beige);">$${formatNum(totalEvento)}</div></div></div>
+    <div style="font-size:12px; color:var(--gris); text-align:center;">${empleadosCargados.length} empleado${empleadosCargados.length !== 1 ? 's' : ''}</div>`;
+  document.getElementById('cierre-gastos').value = '';
+  document.getElementById('cierre-recibido').value = '';
+  document.getElementById('cierre-obs').value = '';
+  document.getElementById('cierre-resultado-wrap').style.display = 'none';
+  showScreen('resumen');
+}
+
+function calcularCierre() {
+  const totalSueldos = empleadosCargados.reduce((a, e) => a + e.total, 0);
+  const gastosExtras = parseFloat(document.getElementById('cierre-gastos').value) || 0;
+  const dineroRecibido = parseFloat(document.getElementById('cierre-recibido').value) || 0;
+  if (dineroRecibido === 0 && gastosExtras === 0) {
+    document.getElementById('cierre-resultado-wrap').style.display = 'none';
+    return;
+  }
+  const totalUtilizado = totalSueldos + gastosExtras;
+  const diferencia = dineroRecibido - totalUtilizado;
+  let estado, estadoClass;
+  if (diferencia > 0) { estado = 'SOBRANTE'; estadoClass = 'sobrante'; }
+  else if (diferencia < 0) { estado = 'FALTANTE'; estadoClass = 'faltante'; }
+  else { estado = 'EXACTO'; estadoClass = 'exacto'; }
+  document.getElementById('cierre-total-sueldos').textContent = '$' + formatNum(totalSueldos);
+  document.getElementById('cierre-total-gastos').textContent = '$' + formatNum(gastosExtras);
+  document.getElementById('cierre-total-utilizado').textContent = '$' + formatNum(totalUtilizado);
+  document.getElementById('cierre-total-recibido').textContent = '$' + formatNum(dineroRecibido);
+  const box = document.getElementById('cierre-resultado-box');
+  box.className = 'cierre-resultado ' + estadoClass;
+  document.getElementById('cierre-estado-label').textContent = estado;
+  document.getElementById('cierre-estado-valor').textContent = '$' + formatNum(Math.abs(diferencia));
+  document.getElementById('cierre-resultado-wrap').style.display = 'block';
+}
+
+async function enviarDatos() {
+  const gastosExtras = parseFloat(document.getElementById('cierre-gastos').value) || 0;
+  const dineroRecibido = parseFloat(document.getElementById('cierre-recibido').value) || 0;
+  const cierreObs = document.getElementById('cierre-obs').value.trim();
+  if (dineroRecibido === 0) {
+    if (!confirm('No ingresaste el dinero recibido. ¿Querés enviar igual?')) return;
+  }
+  const btn = document.getElementById('btn-enviar');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Enviando...';
+  const totalSueldos = empleadosCargados.reduce((a, e) => a + e.total, 0);
+  const totalUtilizado = totalSueldos + gastosExtras;
+  const diferencia = dineroRecibido - totalUtilizado;
+  const payload = {
+    fecha: currentEvento.fecha, evento: currentEvento.evento, encargado: currentEvento.encargado,
+    timestamp: new Date().toISOString(),
+    cierre: {
+      gastosExtras, dineroRecibido, totalSueldos, totalUtilizado,
+      devolucion: diferencia,
+      estado: diferencia > 0 ? 'Sobrante' : diferencia < 0 ? 'Faltante' : 'Exacto',
+      observaciones: cierreObs
+    },
+    rows: empleadosCargados.map(e => ({
+      fecha: currentEvento.fecha, evento: currentEvento.evento, encargado: currentEvento.encargado,
+      empleado: e.nombre, funcion: e.funcion, horas: e.horas,
+      viaticoSiNo: e.viaticoSiNo, viatico: e.viatico,
+      obs: e.obs,
+      subtotalSueldo: e.subtotalSueldo, esFijo: e.esFijo, total: e.total
+    }))
+  };
+  let saved = JSON.parse(localStorage.getItem('nch_eventos') || '[]');
+  saved.unshift({ ...payload, savedAt: new Date().toISOString() });
+  localStorage.setItem('nch_eventos', JSON.stringify(saved.slice(0, 50)));
+  try {
+    await fetch(WEBHOOK_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    document.getElementById('exito-msg').textContent = `${empleadosCargados.length} filas + cierre enviados a Google Sheets.`;
+    document.getElementById('exito-texto-wrap').style.display = 'none';
+    const estadoClass = diferencia > 0 ? 'sobrante' : diferencia < 0 ? 'faltante' : 'exacto';
+    const estadoLabel = diferencia > 0 ? 'SOBRANTE' : diferencia < 0 ? 'FALTANTE' : 'EXACTO';
+    document.getElementById('exito-cierre-detalle').innerHTML = `<div class="cierre-linea"><span class="cierre-linea-label">Total sueldos</span><span class="cierre-linea-valor">$${formatNum(totalSueldos)}</span></div><div class="cierre-linea"><span class="cierre-linea-label">Gastos extras</span><span class="cierre-linea-valor">$${formatNum(gastosExtras)}</span></div><div class="cierre-sep"></div><div class="cierre-linea"><span class="cierre-linea-label" style="color:var(--chalk); font-weight:700;">Total utilizado</span><span class="cierre-linea-valor" style="font-size:15px;">$${formatNum(totalUtilizado)}</span></div><div class="cierre-linea"><span class="cierre-linea-label">Dinero recibido</span><span class="cierre-linea-valor">$${formatNum(dineroRecibido)}</span></div><div class="cierre-resultado ${estadoClass}" style="margin-top:12px;"><div class="cierre-resultado-label">${estadoLabel}</div><div class="cierre-resultado-valor">$${formatNum(Math.abs(diferencia))}</div></div>${cierreObs ? `<div style="font-size:11px; color:var(--gris); margin-top:10px;">📝 ${cierreObs}</div>` : ''}`;
+    document.getElementById('exito-cierre-wrap').style.display = 'block';
+  } catch(e) {
+    document.getElementById('exito-msg').textContent = 'No se pudo conectar. Copiá el texto de abajo para pegarlo manualmente.';
+    const lines = payload.rows.map(r => [r.fecha, r.evento, r.encargado, r.empleado, r.funcion, r.horas, r.viaticoSiNo, r.viatico || '', r.obs || ''].join('\t'));
+    document.getElementById('exito-texto').textContent = 'Fecha\tEvento\tEncargado\tEmpleado\tFunción\tHoras\tViático\tMonto Viático\tObs\n' + lines.join('\n');
+    document.getElementById('exito-texto-wrap').style.display = 'block';
+    document.getElementById('exito-cierre-wrap').style.display = 'none';
+  }
+  btn.disabled = false; btn.innerHTML = '✓ CONFIRMAR Y ENVIAR'; showScreen('exito');
+}
+
+function copiarTexto() {
+  navigator.clipboard.writeText(document.getElementById('exito-texto').textContent).then(() => showToast('✓ Copiado'));
+}
+
+function cancelarEvento() {
+  if (confirm('¿Cancelar la carga? Se perderán los datos.')) showScreen('home');
+}
+
+function nuevoEvento() {
+  currentEvento = null; empleadosCargados = []; eventoSeleccionado = null;
+  document.getElementById('home-encargado').value = '';
+  document.getElementById('home-evento-select').value = '';
+  document.getElementById('home-evento-manual').value = '';
+  document.getElementById('evento-info-box').style.display = 'none';
+  document.getElementById('home-fecha').value = new Date().toISOString().split('T')[0];
+  showScreen('home'); cargarEventos();
+}
+
+function formatNum(n) { return Math.round(n).toLocaleString('es-AR'); }
+
+function formatFecha(dateStr) {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-');
+  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return `${parseInt(d)} ${meses[parseInt(m)-1]} ${y}`;
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function forzarRecarga() {
+  if (confirm('¿Actualizar la app? Se va a recargar la página.')) {
+    if ('caches' in window) {
+      caches.keys().then(names => names.forEach(name => caches.delete(name)));
+    }
+    window.location.reload(true);
+  }
+}
+</script>
+</body>
+</html>
